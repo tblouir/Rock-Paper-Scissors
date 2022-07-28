@@ -1,59 +1,105 @@
 let choices = ["rock", "paper", "scissors"];
-function playGame() {
-    let playerSelection = window.prompt("Rock, Paper, or Scissors?").toLowerCase();
+let buttons = document.querySelectorAll('button');
+let playerScoreElement = document.querySelector('.playerScore');
+let computerScoreElement = document.querySelector('.computerScore');
+let scoreText = document.querySelector('.scoreText');
+let resetButton = document.querySelector('.reset')
+let winPicture = document.querySelector('.win')
+let losePicture = document.querySelector('.lose')
+let playerScore = 0;
+let computerScore = 0;
+
+function selectRandom() {
+    return choices[Math.floor(Math.random() * 3)];
+}
+
+function playGame(playerSelection) {
+    let computerSelection = selectRandom();
     console.log(`Player Selection: ${playerSelection}`)
-    function selectRandom() {
-        return choices[Math.floor(Math.random() * 3)];
-    }
-    computerSelection = selectRandom();
     console.log(`Computer Selection: ${computerSelection}`);
-    while (!choices.includes(playerSelection)) {
-        playerSelection = window.prompt("Rock, Paper, or Scissors?");
-    };
+
     switch(playerSelection) {
         case "rock":
-            if (computerSelection === choices[2]) {
-                console.log("You win!")
-                return true;
-            } else if (computerSelection === choices[1]) {
-                console.log("You lose!")
-                return false;
+            if (computerSelection === "scissors") {
+                playerScore += 1;
+                console.log("You win!");
+                scoreText.textContent = 'You win!';
+            } else if (computerSelection === "paper") {
+                computerScore += 1;
+                console.log("You lose!");
+                scoreText.textContent = 'You lose.';
             } else {
-                alert("Tie!");
-                playGame();
+                scoreText.textContent = 'Tie!';
             }
             break;
         case "paper":
-            if (computerSelection === choices[0]) {
-                return true;
-            } else if (computerSelection === choices[2]) {
-                return false;
+            if (computerSelection === "rock") {
+                playerScore += 1;
+                console.log("You win!");
+                scoreText.textContent = 'You win!';
+            } else if (computerSelection === "scissors") {
+                computerScore += 1;
+                console.log("You lose!");
+                scoreText.textContent = 'You lose.';
             } else {
-                alert("Tie!");
-                playGame();
+                scoreText.textContent = 'Tie!';
             }
             break;
         case "scissors":
-            if (computerSelection === choices[1]) {
-                return true;
-            } else if (computerSelection === choices[0]) {
-                return false;
+            if (computerSelection === "paper") {
+                playerScore += 1;
+                console.log("You win!");
+                scoreText.textContent = 'You win!';
+            } else if (computerSelection === "rock") {
+                computerScore += 1;
+                console.log("You lose!")
+                scoreText.textContent = 'You lose.';
             } else {
-                alert("Tie!");
-                playGame();
+                scoreText.textContent = 'Tie!';
             }
             break;
         default:
-            console.log("Error!")
+            console.log("Resetting.")
+    }
+
+    if (scoreText.textContent === 'You win!') scoreText.style.color = 'green';
+    if (scoreText.textContent === 'You lose.') scoreText.style.color = 'red';
+    if (scoreText.textContent === 'Tie!') scoreText.style.color = 'black';
+    
+    if (playerScore === 5) {
+        playerScoreElement.textContent = 5;
+        winPicture.style.display = 'block'
+        scoreText.style.display = 'none'
+        return;
+    } else if (computerScore === 5) {
+        computerScoreElement.textContent = 5;
+        losePicture.style.display = 'block'
+        scoreText.style.display = 'none'
+        return;
+    } else {
+        playerScoreElement.textContent = playerScore;
+        computerScoreElement.textContent = computerScore;
+        return;
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    if (playGame()) {
-        document.querySelector(".win").style.display = "block";
-        document.querySelector(".lose").style.display = "none";
-    } else {
-        document.querySelector(".lose").style.display = "block";
-        document.querySelector(".win").style.display = "none";
-    }
+resetButton.addEventListener ('click', (e) => {
+    playerScore = 0;
+    computerScore = 0;
+    playerScoreElement.textContent = playerScore;
+    computerScoreElement.textContent = computerScore;
+    winPicture.style.display = 'none';
+    losePicture.style.display = 'none';
+    scoreText.style.display = 'block';
+    scoreText.textContent = 'First to 5 wins!'
+    scoreText.setAttribute('style', 'color: black')
 })
+
+buttons.forEach((button) => {
+    button.addEventListener('click', (e) => {
+        if (playerScore >= 5 || computerScore >= 5) {
+            return
+        }
+        playGame(e.target.className);
+})
+});
